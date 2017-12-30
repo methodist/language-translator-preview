@@ -1,114 +1,73 @@
-# Language Translator Node.js [![Build Status](https://travis-ci.org/watson-developer-cloud/language-translator-nodejs.svg?branch=master)](https://travis-ci.org/watson-developer-cloud/language-translator-nodejs)
+# Language Translation サンプルアプリ 
 
-  The IBM Watson&trade; [Language Translator][service_url] service provides an Application Programming Interface (API) that lets you identify the language of text, and then use a custom business domain to translate the text from one supported language to another.  
-  You can translate either by letting the service identify the source language or by selecting a source language and then by selecting a target language, and a business domain. Domain translation is linguistically targeted these business domains:
-  * *The News domain* - targeted at news articles and transcripts, it translates English to and from Arabic, Brazilian Portuguese, French, Italian, or Spanish. It also translates Spanish to and from French.
-  * *The Conversational domain* - targeted at conversational colloquialisms, it translates English to and from Arabic, Brazilian Portuguese, French, Italian, or Spanish.
-  * *The Patent domain* - targeted at technical and legal terminology, it translates Brazilian Portuguese, Chinese, or Spanish to English.
+Watson APIの一つ Language Translationのサンプルアプリです。  
+内部で深層学習をつかっているプレビュー版を呼び出しています。  
 
-Give it a try! Click the button below to fork into IBM DevOps Services and deploy your own copy of this application on Bluemix.
+# 導入手順
 
-[![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/watson-developer-cloud/language-translator-nodejs)
+## IBM Cloudアカウントの準備
 
-## Getting started
+[IBM Cloudアカウントを作る][sign_up] か、あるいは既存のIBM Cloudアカウントを利用します。
 
-1. You need a Bluemix account. If you don't have one, [sign up][sign_up]. Experimental Watson Services are free to use.
+## 前提ソフトの導入
+次の前提ソフトを導入します。下記のリンク先からダウンロード後、それぞれ導入して下さい。
 
-1. Download and install the [Cloud-foundry CLI][cloud_foundry] tool if you haven't already.
+[gitコマンドラインツール][git]  
+[Cloud Foundryコマンドラインツール][cloud_foundry]  
+  
+注意: Cloud Foundaryのバージョンは最新として下さい。 
 
-1. Edit the `manifest.yml` file and change `<application-name>` to something unique. The name you use determines the URL of your application. For example, `<application-name>.mybluemix.net`.
+## ソースのダウンロード
+Githubからアプリケーションのソースをダウンロードします。  
+カレントディレクトリのサブディレクトリにソースはダウンロードされるので、あらかじめ適当なサブディレクトリを作り、そこにcdしてから下記のコマンドを実行します。  
+ダウンロード後、できたサブディレクトリにcdします。
+ 
 
-    ```yaml
-    applications:
-    - services:
-      - language-translator-service
-      name: <application-name>
-      command: node app.js
-      path: .
-      memory: 128M
-    ```
+```
+$ cd (適当なサブディレクトリ)
+$ git clone https://github.com/makaishi2/language-translator-preview.git
+$ cd language-translator-preview
+```
 
-1. Connect to Bluemix with the command line tool.
+## CFコマンドでログイン
+CFコマンドでIBM Cloud環境にログインします。ログイン名、パスワードはIBMアカウント登録で登録したものを利用します。  
+ログインに成功すると、次のような画面となります。  
 
-  ```sh
-  cf api https://api.ng.bluemix.net
-  cf login
-  ```
+```
+$ cf login
+```
 
-1. Create the Language Translator service in Bluemix.
-
-    ```sh
-    cf create-service language_translator lite language-translator-service
-    cf create-service-key language-translator-service myKey
-    cf service-key language-translator-service myKey
-    ```
-
-1. Create a `.env` file in the root directory by copying the sample `.env.example` file using the following command:
-
-  ```none
-  cp .env.example .env
-  ```
-  You will update the `.env` with the information you retrieved in steps 5.
-
-  The `.env` file will look something like the following:
-
-  ```none
-  SPEECH_TO_TEXT_USERNAME=<username>
-  SPEECH_TO_TEXT_PASSWORD=<password>
-  ```
-
-1. Install the dependencies you application need:
-
-  ```none
-  npm install
-  ```
-
-1. Start the application locally:
-
-  ```none
-  npm start
-  ```
-
-1. Point your browser to [http://localhost:3000](http://localhost:3000).
-
-1. **Optional:** Push the application to Bluemix:
-
-  ```none
-  cf push
-  ```
-
-After completing the steps above, you are ready to test your application. Start a browser and enter the URL of your application.
-
-            <your application name>.mybluemix.net
+![](readme_images/cf-login.png)  
 
 
-For more details about developing applications that use Watson Developer Cloud services in Bluemix, see [Getting started with Watson Developer Cloud and Bluemix][getting_started].
+## CFコマンドの実行
+次のような一連のCFコマンドを実行します。
+\<service_name\>はなんでもいいのですが、インターネット上のURLの一部となるので、ユニークな名前を指定します。
+(例) language-translator-aka2
 
-## Troubleshooting
 
-* The main source of troubleshooting and recovery information is the Bluemix log. To view the log, run the following command:
+```
+$ cf create-service language_translator lite language-translator-service
+$ cf create-service-key language-translator-service myKey
+$ cf push <service_name>
+```
 
-  ```sh
-  $ cf logs <application-name> --recent
-  ```
+デプロイには数分時間がかかりますが、正常に終了すれば、アプリケーションの完成です。
 
-* For more details about the service, see the [documentation][docs] for the Language Translator.
+## アプリケーションの実行
 
-## License
+URLは、
 
-  This sample code is licensed under Apache 2.0. Full license text is available in [LICENSE](LICENSE).
-  This sample code is using jQuery which is licensed under MIT.
-  This sample code is using bootstrap which is licensed under MIT.
+```
+https://<service_name>.mybluemix.com
+```
 
-## Contributing
+です。
 
-  See [CONTRIBUTING](CONTRIBUTING.md).
+[node_js]: https://nodejs.org/ja/download/
+[cloud_foundry]: https://github.com/cloudfoundry/cli#downloads
+[git]: https://git-scm.com/downloads
+[sign_up]: https://bluemix.net/registration
+[bluemix_dashboard]: https://console.bluemix.net/dashboard/
 
-## Open Source @ IBM
-  Find more open source projects on the [IBM Github Page](http://ibm.github.io/)
 
-[cloud_foundry]: https://github.com/cloudfoundry/cli
-[service_url]: https://www.ibm.com/watson/services/language-translator/
-[getting_started]: https://console.bluemix.net/docs/services/watson/getting-started-credentials.html#service-credentials-for-watson-services
-[sign_up]: https://console.ng.bluemix.net/registration/
-[docs]: https://console.bluemix.net/docs/services/language-translator/getting-started.html
