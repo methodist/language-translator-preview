@@ -5,7 +5,6 @@ declared-services:
 applications:
 - services:
   - language-translator-service
-  name: language-translator-demo
   command: npm start
   path: .
   memory: 256M

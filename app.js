@@ -28,11 +28,12 @@ var express  = require('express'),
 require('./config/express')(app);
 
 
+// If unspecified here, the LANGUAGE_TRANSLATOR_USERNAME and LANGUAGE_TRANSLATOR_PASSWORD environment properties will be checked
+// After that, the SDK will fall back to the bluemix-provided VCAP_SERVICES environment property
+
+
+
 var translator = new LanguageTranslatorV2({
-  // If unspecified here, the LANGUAGE_TRANSLATOR_USERNAME and LANGUAGE_TRANSLATOR_PASSWORD environment properties will be checked
-  // After that, the SDK will fall back to the bluemix-provided VCAP_SERVICES environment property
-  // username: '<username>',
-  // password: '<password>'
   url: 'https://gateway.watsonplatform.net/language-translator/api'
 });
 
@@ -78,15 +79,65 @@ app.get('/api/identifiable_languages', function(req, res, next) {
 });
 
 app.post('/api/translate',  function(req, res, next) {
-  console.log('/v2/translate');
-  var params = extend({ 'X-WDC-PL-OPT-OUT': req.header('X-WDC-PL-OPT-OUT')}, req.body);
-  translator.translate(params, function(err, models) {
-    if (err)
-      return next(err);
-    else
-      res.json(models);
-  });
-});
+
+    const bufferFrom = require('buffer-from');
+    const request = require('request');
+
+    var username;
+    var password;
+
+    // set username and password on local env
+    if (process.env['LANGUAGE_TRANSLATOR_USERNAME']) {
+        username = process.env['LANGUAGE_TRANSLATOR_USERNAME']
+    }
+    if (process.env['LANGUAGE_TRANSLATOR_PASSWORD']){
+        password = process.env['LANGUAGE_TRANSLATOR_PASSWORD'];
+    }
+    
+    // set username and password on ibm cloud env
+    if (process.env.VCAP_SERVICES)
+    {
+        var env = JSON.parse(process.env.VCAP_SERVICES);
+        var vcap = env.language_translator;
+        username = vcap[0].credentials.username;
+        password = vcap[0].credentials.password;
+     }
+
+    console.log( 'username: ' + username);
+    console.log( 'password: ' + password);
+
+    var headers = {
+        Authorization: 'Basic ' + bufferFrom(username + ':' + password).toString('base64'),
+        'Content-Type':'application/json',
+        'X-Watson-Technology-Preview':'2017-07-01'
+    }
+
+    var options = {
+        url: 'https://gateway.watsonplatform.net/language-translator/api/v2/translate',
+        method: 'POST',
+        headers: headers,
+        json: true,
+        body: {
+            text: req.body.text,
+            model_id: req.body.model_id
+        }
+    }
+
+    console.log(options);
+
+    console.log('/v2/translate');
+    request(options, function (error, response, body) {
+        if ( error ) {
+            console.log("error.");
+            console.log(error);
+            return next(error);
+        } else {
+            console.log("normal end.");
+            console.log(body);
+            res.json(body);
+        }
+    })
+})
 
 // express error handler
 require('./config/error-handler')(app);
