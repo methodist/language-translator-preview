@@ -1,7 +1,7 @@
 # Language Translation サンプルアプリ 
 
-Watson APIの一つ Language Translationのサンプルアプリです。  
-内部で深層学習をつかっているプレビュー版を呼び出しています。  
+Watson APIの一つ Language Translationのサンプルアプリです。  
+英日・日英翻訳に関しては、内部で深層学習をつかっているプレビュー版を呼び出しています。
 
 # 導入手順
 
