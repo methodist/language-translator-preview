@@ -135,10 +135,6 @@ $(document).ready(function () {
       $('#profile textarea').val('');
       $('#profile2 textarea').val('');
 
-      if ((sourceLangSelect.toLowerCase() === 'detect language') || (sourceLangSelect.toLowerCase() === 'choose language')) {
-        $('#dropdownMenuInput').html('Choose Language <span class="caret"></span>');
-        $('#dropdownMenuOutput').html('Choose Language <span class="caret"></span>');
-      }
     }
     clearTimeout(typingTimer);
     typingTimer = setTimeout(doneTyping, doneTypingInterval);
