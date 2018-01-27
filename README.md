@@ -6,7 +6,7 @@ Watson APIの一つ Language Translationのサンプルアプリです。
 
 翻訳結果サンプル  
 
-![](pictures/sample1.png)
+![](readme_images/sample1.png)
 
 # 導入手順
 
